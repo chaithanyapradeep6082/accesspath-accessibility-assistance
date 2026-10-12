@@ -12,15 +12,13 @@ export default function ScholarshipForm({
   eligible,
 }) {
   const [errors, setErrors] = useState({});
-
   const currentStep = Math.min(Math.max(Number(step) || 0, 0), 2);
 
   function handleChange(event) {
     const { name, value, type, checked } = event.target;
-    const nextValue = type === "checkbox" ? checked : value;
 
     if (typeof updateForm === "function") {
-      updateForm(name, nextValue);
+      updateForm(name, type === "checkbox" ? checked : value);
     }
 
     setErrors((previous) => ({ ...previous, [name]: "" }));
@@ -31,15 +29,15 @@ export default function ScholarshipForm({
 
     if (currentStep === 0) {
       if (!String(form.fullName || "").trim()) {
-        nextErrors.fullName = "Please enter your full name.";
+        nextErrors.fullName = "Full name is required.";
       }
 
       if (!String(form.email || "").trim()) {
-        nextErrors.email = "Please enter your email address.";
+        nextErrors.email = "Email is required.";
       } else if (
         !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(form.email).trim())
       ) {
-        nextErrors.email = "Please enter a valid email address.";
+        nextErrors.email = "Enter a valid email address.";
       }
     }
 
@@ -54,7 +52,7 @@ export default function ScholarshipForm({
         percentage < 0 ||
         percentage > 100
       ) {
-        nextErrors.percentage = "Enter a percentage between 0 and 100.";
+        nextErrors.percentage = "Enter a percentage from 0 to 100.";
       }
 
       if (
@@ -68,12 +66,11 @@ export default function ScholarshipForm({
       }
 
       if (!String(form.category || "").trim()) {
-        nextErrors.category = "Please select your category.";
+        nextErrors.category = "Select your category.";
       }
 
       if (!form.consent) {
-        nextErrors.consent =
-          "Please confirm the demonstration data notice.";
+        nextErrors.consent = "Please acknowledge the demonstration data notice.";
       }
     }
 
@@ -82,38 +79,28 @@ export default function ScholarshipForm({
   }
 
   function ErrorMessage({ name }) {
-    if (!errors[name]) return null;
-
-    return (
-      <p className="form-error" id={`${name}-error`} role="alert">
+    return errors[name] ? (
+      <p id={`${name}-error`} className="form-error" role="alert">
         {errors[name]}
       </p>
-    );
+    ) : null;
   }
 
   function handleNext() {
-    if (validateStep() && typeof onNext === "function") {
-      onNext();
-    }
+    if (validateStep() && typeof onNext === "function") onNext();
   }
 
   function handleSubmit() {
-    if (validateStep() && typeof onSubmit === "function") {
-      onSubmit();
-    }
+    if (validateStep() && typeof onSubmit === "function") onSubmit();
   }
 
   return (
     <section className="scholarship-form" aria-labelledby="application-title">
       <h2 id="application-title">Scholarship Application</h2>
-
-      <p>
-        Complete each step to review your details and check potential
-        scholarship matches.
-      </p>
+      <p>Complete each step to review your details and potential matches.</p>
 
       {submitted && (
-        <p role="status" className="form-notice">
+        <p className="form-notice" role="status">
           Your details have been submitted for this demonstration.
         </p>
       )}
@@ -122,37 +109,32 @@ export default function ScholarshipForm({
         <fieldset className="form-step">
           <legend>Step 1: Personal Details</legend>
 
-          <div className="form-field">
-            <label htmlFor="fullName">Full name</label>
-            <input
-              id="fullName"
-              name="fullName"
-              type="text"
-              autoComplete="name"
-              value={form.fullName || ""}
-              onChange={handleChange}
-              required
-              aria-invalid={Boolean(errors.fullName)}
-              aria-describedby={errors.fullName ? "fullName-error" : undefined}
-            />
-            <ErrorMessage name="fullName" />
-          </div>
+          <label htmlFor="fullName">Full name</label>
+          <input
+            id="fullName"
+            name="fullName"
+            value={form.fullName || ""}
+            onChange={handleChange}
+            autoComplete="name"
+            required
+            aria-invalid={Boolean(errors.fullName)}
+            aria-describedby={errors.fullName ? "fullName-error" : undefined}
+          />
+          <ErrorMessage name="fullName" />
 
-          <div className="form-field">
-            <label htmlFor="email">Email address</label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              autoComplete="email"
-              value={form.email || ""}
-              onChange={handleChange}
-              required
-              aria-invalid={Boolean(errors.email)}
-              aria-describedby={errors.email ? "email-error" : undefined}
-            />
-            <ErrorMessage name="email" />
-          </div>
+          <label htmlFor="email">Email address</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            value={form.email || ""}
+            onChange={handleChange}
+            autoComplete="email"
+            required
+            aria-invalid={Boolean(errors.email)}
+            aria-describedby={errors.email ? "email-error" : undefined}
+          />
+          <ErrorMessage name="email" />
         </fieldset>
       )}
 
@@ -160,68 +142,62 @@ export default function ScholarshipForm({
         <fieldset className="form-step">
           <legend>Step 2: Eligibility Details</legend>
 
-          <div className="form-field">
-            <label htmlFor="percentage">Academic percentage (0–100)</label>
-            <input
-              id="percentage"
-              name="percentage"
-              type="number"
-              min="0"
-              max="100"
-              step="any"
-              value={form.percentage ?? ""}
-              onChange={handleChange}
-              required
-              aria-invalid={Boolean(errors.percentage)}
-              aria-describedby={
-                errors.percentage ? "percentage-error" : undefined
-              }
-            />
-            <ErrorMessage name="percentage" />
-          </div>
+          <label htmlFor="percentage">Academic percentage (0–100)</label>
+          <input
+            id="percentage"
+            name="percentage"
+            type="number"
+            min="0"
+            max="100"
+            step="any"
+            value={form.percentage ?? ""}
+            onChange={handleChange}
+            required
+            aria-invalid={Boolean(errors.percentage)}
+            aria-describedby={
+              errors.percentage ? "percentage-error" : undefined
+            }
+          />
+          <ErrorMessage name="percentage" />
 
-          <div className="form-field">
-            <label htmlFor="familyIncome">Annual family income (₹)</label>
-            <input
-              id="familyIncome"
-              name="familyIncome"
-              type="number"
-              min="0"
-              step="any"
-              value={form.familyIncome ?? ""}
-              onChange={handleChange}
-              required
-              aria-invalid={Boolean(errors.familyIncome)}
-              aria-describedby={
-                errors.familyIncome ? "familyIncome-error" : undefined
-              }
-            />
-            <ErrorMessage name="familyIncome" />
-          </div>
+          <label htmlFor="familyIncome">Annual family income (₹)</label>
+          <input
+            id="familyIncome"
+            name="familyIncome"
+            type="number"
+            min="0"
+            step="any"
+            value={form.familyIncome ?? ""}
+            onChange={handleChange}
+            required
+            aria-invalid={Boolean(errors.familyIncome)}
+            aria-describedby={
+              errors.familyIncome ? "familyIncome-error" : undefined
+            }
+          />
+          <ErrorMessage name="familyIncome" />
 
-          <div className="form-field">
-            <label htmlFor="category">Category</label>
-            <select
-              id="category"
-              name="category"
-              value={form.category || ""}
-              onChange={handleChange}
-              required
-              aria-invalid={Boolean(errors.category)}
-              aria-describedby={errors.category ? "category-error" : undefined}
-            >
-              <option value="">Select your category</option>
-              <option value="General">General</option>
-              <option value="OBC">OBC</option>
-              <option value="SC">SC</option>
-              <option value="ST">ST</option>
-              <option value="EWS">EWS</option>
-              <option value="Other">Other</option>
-            </select>
-            <ErrorMessage name="category" />
-          </div>
+          <label htmlFor="category">Category</label>
+          <select
+            id="category"
+            name="category"
+            value={form.category || ""}
+            onChange={handleChange}
+            required
+            aria-invalid={Boolean(errors.category)}
+            aria-describedby={errors.category ? "category-error" : undefined}
+          >
+            <option value="">Select category</option>
+            <option value="General">General</option>
+            <option value="OBC">OBC</option>
+            <option value="SC">SC</option>
+            <option value="ST">ST</option>
+            <option value="EWS">EWS</option>
+            <option value="Other">Other</option>
+          </select>
+          <ErrorMessage name="category" />
 
-          <div className="form-field form-field--checkbox">
+          <div className="form-field--checkbox">
             <input
               id="consent"
               name="consent"
@@ -233,11 +209,11 @@ export default function ScholarshipForm({
               aria-describedby={errors.consent ? "consent-error" : undefined}
             />
             <label htmlFor="consent">
-              I understand that this project uses illustrative demonstration
-              scholarship data that must be independently verified.
+              I understand that scholarship information is illustrative
+              demonstration data and must be independently verified.
             </label>
-            <ErrorMessage name="consent" />
           </div>
+          <ErrorMessage name="consent" />
         </fieldset>
       )}
 
@@ -272,34 +248,28 @@ export default function ScholarshipForm({
 
           {eligible !== undefined && (
             <p role="status">
-              Eligibility check:{" "}
               {eligible === true
                 ? "Potential matches found."
                 : eligible === false
-                  ? "No matching scholarships were identified by the current rules."
-                  : "Not checked yet."}
+                  ? "No matching scholarships found under the current rules."
+                  : "Eligibility has not been checked yet."}
             </p>
           )}
 
           <p className="form-disclaimer">
-            This is a demonstration, not an official scholarship application.
-            Verify scholarship requirements and application details through
-            official sources.
+            This is not an official scholarship application. Verify eligibility
+            and application details through official sources.
           </p>
         </section>
       )}
 
       <div className="form-actions">
         {currentStep > 0 && (
-          <button type="button" onClick={onBack}>
-            Back
-          </button>
+          <button type="button" onClick={onBack}>Back</button>
         )}
 
         {currentStep < 2 && (
-          <button type="button" onClick={handleNext}>
-            Continue
-          </button>
+          <button type="button" onClick={handleNext}>Continue</button>
         )}
 
         {currentStep === 2 && (
