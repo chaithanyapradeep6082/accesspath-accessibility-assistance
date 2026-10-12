@@ -1,4 +1,8 @@
-import { useState } from "react";
+const STEPS = [
+  "Your Details",
+  "Education & Income",
+  "Review",
+];
 
 export default function ScholarshipForm({
   step,
@@ -8,249 +12,244 @@ export default function ScholarshipForm({
   onBack,
   onSubmit,
   submitted,
-  eligible,
+  eligible = [],
 }) {
-  const [errors, setErrors] = useState({});
+  function handleSubmit(event) {
+    event.preventDefault();
 
-  function validateAbout() {
-    const next = {};
-    if (!form.fullName.trim()) next.fullName = "Enter your full name.";
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email))
-      next.email = "Enter a valid email address.";
-    setErrors(next);
-    return Object.keys(next).length === 0;
+    if (step < 2) {
+      onNext();
+    } else {
+      onSubmit();
+    }
   }
 
-  function validateEligibility() {
-    const next = {};
-    const percentage = Number(form.percentage);
-    const income = Number(form.familyIncome);
+  function handleChange(event) {
+    const { name, value, type, checked } = event.target;
 
-    if (form.percentage === "" || percentage < 0 || percentage > 100)
-      next.percentage = "Enter a percentage between 0 and 100.";
-
-    if (form.familyIncome === "" || income < 0)
-      next.familyIncome = "Enter a valid annual family income.";
-
-    if (!form.consent)
-      next.consent = "Please confirm that you reviewed the demo information.";
-
-    setErrors(next);
-    return Object.keys(next).length === 0;
-  }
-
-  function next() {
-    if (step === 0 && validateAbout()) onNext();
-    if (step === 1 && validateEligibility()) onNext();
+    updateForm(
+      name,
+      type === "checkbox" ? checked : value
+    );
   }
 
   if (submitted) {
     return (
-      <div className="success-state" role="status">
-        <div className="success-icon" aria-hidden="true">✓</div>
-        <p className="eyebrow">DEMO COMPLETE</p>
-        <h3>You've reached the end of the journey.</h3>
+      <section className="application-card" aria-live="polite">
+        <h3>Application overview</h3>
+
         <p>
-          Your details have not been submitted to any scholarship provider.
-          You can review the matching sample scholarships below.
+          Your demonstration application has been completed.
+          No information was submitted to a real scholarship provider.
         </p>
-        <div className="eligible-list">
-          {eligible.length ? eligible.map((item) => (
-            <div className="eligible-item" key={item.id}>
-              <div>
-                <strong>{item.name}</strong>
-                <p className="muted tiny">
-                  Minimum percentage: {item.min_percentage}%
-                </p>
-              </div>
-              <span className="award-amount">
-                ₹{item.award_amount.toLocaleString("en-IN")}
-              </span>
-            </div>
-          )) : (
-            <p>No sample scholarships match these inputs. This is not an official eligibility decision.</p>
-          )}
-        </div>
-      </div>
+
+        <h4>Sample scholarships matching your details</h4>
+
+        {eligible.length > 0 ? (
+          <ul>
+            {eligible.map((item) => (
+              <li key={item.id ?? item.name}>
+                {item.name}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p>
+            No matching sample scholarships were found.
+            You can still explore all available scholarships.
+          </p>
+        )}
+
+        <button
+          type="button"
+          className="button button-secondary"
+          onClick={onBack}
+        >
+          Back to review
+        </button>
+      </section>
     );
   }
 
   return (
     <form
-      className="application-form"
-      onSubmit={(event) => {
-        event.preventDefault();
-        next();
-      }}
+      className="application-card"
+      onSubmit={handleSubmit}
       noValidate
     >
-      {step === 0 && (
-        <div className="form-section">
-          <span className="section-number">STEP 01</span>
-          <h3>Let's start with the basics.</h3>
-          <p className="muted">
-            Enter your details to personalise this demonstration.
-            Your information stays in this browser.
-          </p>
+      <p className="eyebrow">
+        STEP {step + 1} OF {STEPS.length}
+      </p>
 
-          <div className="field">
-            <label htmlFor="fullName">Full name <span aria-hidden="true">*</span></label>
+      <h3>{STEPS[step]}</h3>
+
+      {step === 0 && (
+        <div className="form-grid">
+          <div className="field full-width">
+            <label htmlFor="fullName">
+              Full name *
+            </label>
+
             <input
               id="fullName"
+              name="fullName"
+              type="text"
               autoComplete="name"
               value={form.fullName}
-              onChange={(e) => updateForm("fullName", e.target.value)}
-              aria-invalid={Boolean(errors.fullName)}
-              aria-describedby={errors.fullName ? "name-error" : undefined}
+              onChange={handleChange}
               required
             />
-            {errors.fullName && <p id="name-error" className="field-error">{errors.fullName}</p>}
           </div>
 
-          <div className="field">
-            <label htmlFor="email">Email address <span aria-hidden="true">*</span></label>
+          <div className="field full-width">
+            <label htmlFor="email">
+              Email address *
+            </label>
+
             <input
               id="email"
+              name="email"
               type="email"
               autoComplete="email"
               value={form.email}
-              onChange={(e) => updateForm("email", e.target.value)}
-              aria-invalid={Boolean(errors.email)}
-              aria-describedby={errors.email ? "email-error" : undefined}
+              onChange={handleChange}
               required
             />
-            {errors.email && <p id="email-error" className="field-error">{errors.email}</p>}
           </div>
         </div>
       )}
 
       {step === 1 && (
-        <div className="form-section">
-          <span className="section-number">STEP 02</span>
-          <h3>Let's explore your eligibility.</h3>
-          <p className="muted">
-            These details are compared only with the fictional records included in this demo.
-          </p>
-
+        <div className="form-grid">
           <div className="field">
-            <label htmlFor="percentage">Academic percentage <span aria-hidden="true">*</span></label>
+            <label htmlFor="percentage">
+              Academic percentage *
+            </label>
+
             <input
               id="percentage"
+              name="percentage"
               type="number"
               min="0"
               max="100"
-              step="0.01"
-              inputMode="decimal"
+              step="0.1"
               value={form.percentage}
-              onChange={(e) => updateForm("percentage", e.target.value)}
-              aria-invalid={Boolean(errors.percentage)}
-              aria-describedby={errors.percentage ? "percentage-error" : "percentage-hint"}
+              onChange={handleChange}
               required
             />
-            <small id="percentage-hint" className="field-hint">Enter a value between 0 and 100.</small>
-            {errors.percentage && <p id="percentage-error" className="field-error">{errors.percentage}</p>}
           </div>
 
           <div className="field">
-            <label htmlFor="familyIncome">Annual family income (₹) <span aria-hidden="true">*</span></label>
+            <label htmlFor="familyIncome">
+              Annual family income (₹) *
+            </label>
+
             <input
               id="familyIncome"
+              name="familyIncome"
               type="number"
               min="0"
-              step="1000"
-              inputMode="numeric"
               value={form.familyIncome}
-              onChange={(e) => updateForm("familyIncome", e.target.value)}
-              aria-invalid={Boolean(errors.familyIncome)}
-              aria-describedby={errors.familyIncome ? "income-error" : undefined}
+              onChange={handleChange}
               required
             />
-            {errors.familyIncome && <p id="income-error" className="field-error">{errors.familyIncome}</p>}
           </div>
 
           <div className="field">
-            <label htmlFor="category">Scholarship category of interest</label>
+            <label htmlFor="category">
+              Category *
+            </label>
+
             <select
               id="category"
+              name="category"
               value={form.category}
-              onChange={(e) => updateForm("category", e.target.value)}
+              onChange={handleChange}
+              required
             >
-              <option>General</option>
-              <option>Disability</option>
-              <option>STEM</option>
-              <option>Need-Based</option>
+              <option value="General">General</option>
+              <option value="OBC">OBC</option>
+              <option value="SC">SC</option>
+              <option value="ST">ST</option>
+              <option value="Other">Other</option>
             </select>
           </div>
 
-          <label className="checkbox-field">
-            <input
-              type="checkbox"
-              checked={form.consent}
-              onChange={(e) => updateForm("consent", e.target.checked)}
-              aria-invalid={Boolean(errors.consent)}
-            />
-            <span>I understand that these are sample records and this is not an official application.</span>
-          </label>
-          {errors.consent && <p className="field-error">{errors.consent}</p>}
+          <div className="field full-width">
+            <label className="consent-label">
+              <input
+                name="consent"
+                type="checkbox"
+                checked={form.consent}
+                onChange={handleChange}
+                required
+              />
+
+              I agree to use fictional sample information
+              for this demonstration.
+            </label>
+          </div>
         </div>
       )}
 
       {step === 2 && (
-        <div className="form-section">
-          <span className="section-number">STEP 03</span>
-          <h3>Review your details.</h3>
-          <p className="muted">Check your entries before completing this local demonstration.</p>
+        <div className="review-list">
+          <div>
+            <strong>Full name</strong>
+            <p>{form.fullName}</p>
+          </div>
 
-          <dl className="review-list">
-            <div><dt>Full name</dt><dd>{form.fullName || "Not entered"}</dd></div>
-            <div><dt>Email</dt><dd>{form.email || "Not entered"}</dd></div>
-            <div><dt>Academic percentage</dt><dd>{form.percentage || "Not entered"}{form.percentage !== "" ? "%" : ""}</dd></div>
-            <div><dt>Annual family income</dt><dd>{form.familyIncome === "" ? "Not entered" : `₹${Number(form.familyIncome).toLocaleString("en-IN")}`}</dd></div>
-            <div><dt>Interest category</dt><dd>{form.category}</dd></div>
-          </dl>
+          <div>
+            <strong>Email</strong>
+            <p>{form.email}</p>
+          </div>
 
-          <h4>Sample scholarships matching your entries</h4>
-          {eligible.length ? (
-            <div className="eligible-list">
-              {eligible.map((item) => (
-                <div className="eligible-item" key={item.id}>
-                  <div>
-                    <strong>{item.name}</strong>
-                    <p className="muted tiny">Minimum percentage: {item.min_percentage}%</p>
-                  </div>
-                  <span className="award-amount">₹{item.award_amount.toLocaleString("en-IN")}</span>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p className="muted">No sample matches found yet. Go back to check your entries.</p>
-          )}
-          <p className="field-hint">
-            Matching is based on percentage and income only. This is not an official eligibility determination.
+          <div>
+            <strong>Academic percentage</strong>
+            <p>{form.percentage}%</p>
+          </div>
+
+          <div>
+            <strong>Annual family income</strong>
+            <p>
+              ₹{Number(form.familyIncome).toLocaleString("en-IN")}
+            </p>
+          </div>
+
+          <div>
+            <strong>Category</strong>
+            <p>{form.category}</p>
+          </div>
+
+          <p className="disclaimer">
+            These are demonstration details, not an official
+            scholarship application.
           </p>
         </div>
       )}
 
       <div className="form-actions">
-        <button
-          type="button"
-          className="button button-secondary"
-          onClick={onBack}
-          disabled={step === 0}
-        >
-          ← Back
-        </button>
-
-        {step < 2 ? (
-          <button type="submit" className="button button-primary">
-            Continue <span aria-hidden="true">→</span>
-          </button>
-        ) : (
-          <button type="button" className="button button-primary" onClick={onSubmit}>
-            Complete demo <span aria-hidden="true">✓</span>
+        {step > 0 && (
+          <button
+            type="button"
+            className="button button-secondary"
+            onClick={onBack}
+          >
+            Back
           </button>
         )}
+
+        <button
+          type="submit"
+          className="button button-primary"
+        >
+          {step === 2 ? "Complete demo" : "Continue →"}
+        </button>
       </div>
+
+      <p className="required-note">
+        Fields marked with * are required.
+      </p>
     </form>
   );
 }
