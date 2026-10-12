@@ -1,0 +1,12 @@
+
+id,name,min_percentage,max_family_income,award_amount
+S001,Scholarship Alpha,75,300000,20000
+S002,Scholarship Beta,60,200000,15000
+S003,Scholarship Gamma,85,500000,30000
+S004,Scholarship Delta,70,250000,18000
+S005,Scholarship Epsilon,65,150000,12000
+S006,Scholarship Zeta,80,400000,25000
+S007,Scholarship Eta,55,100000,10000
+S008,Scholarship Theta,90,600000,40000
+S009,Scholarship Iota,72,350000,22000
+S010,Scholarship Kappa,68,180000,14000
