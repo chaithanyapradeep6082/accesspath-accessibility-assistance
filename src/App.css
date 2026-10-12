@@ -1,0 +1,197 @@
+/* ==========================================
+   AccessPath Accessibility-First Stylesheet
+   ================================          */
+
+:root {
+  --bg-color: #f8fafc;
+  --text-color: #1e293b;
+  --primary-color: #2563eb;
+  --primary-hover: #1d4ed8;
+  --card-bg: #ffffff;
+  --border-color: #cbd5e1;
+  --focus-ring: #f59e0b;
+  --font-scale: 1rem;
+}
+
+/* High Contrast Mode Overrides */
+body.high-contrast {
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --primary-color: #ffff00;
+  --primary-hover: #e6e600;
+  --card-bg: #121212;
+  --border-color: #ffffff;
+  --focus-ring: #00ffcc;
+}
+
+/* General Layout & Typography */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-size: var(--font-scale);
+  line-height: 1.6;
+}
+
+.app-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+/* Accessibility Focus Indicators (Crucial for Keyboard Navigation) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 4px solid var(--focus-ring) !important;
+  outline-offset: 3px !important;
+  box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.3);
+}
+
+/* Screen Reader Only Utility */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Data Assistant Styles */
+.data-assistant-container {
+  background-color: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 2rem;
+  margin-top: 2rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.assistant-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.assistant-badge {
+  color: var(--primary-color);
+  font-size: 1.25rem;
+}
+
+.assistant-subtitle {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
+}
+
+.preset-chips-wrapper {
+  margin: 1.5rem 0;
+}
+
+.chips-label {
+  margin-bottom: 0.5rem;
+}
+
+.chips-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.preset-chip-btn {
+  background-color: transparent;
+  border: 2px solid var(--primary-color);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.preset-chip-btn:hover,
+.preset-chip-btn:focus {
+  background-color: var(--primary-color);
+  color: #ffffff;
+}
+
+.assistant-form .input-group {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.assistant-form input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.ask-submit-btn {
+  background-color: var(--primary-color);
+  color: #ffffff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.ask-submit-btn:hover {
+  background-color: var(--primary-hover);
+}
+
+/* Response Card */
+.assistant-response-card {
+  margin-top: 1.5rem;
+  padding: 1.25rem;
+  background-color: var(--bg-color);
+  border-left: 5px solid var(--primary-color);
+  border-radius: 4px;
+}
+
+.speech-action-btn {
+  margin-top: 1rem;
+  background-color: transparent;
+  border: 2px solid var(--text-color);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.speech-action-btn:hover {
+  background-color: var(--text-color);
+  color: var(--bg-color);
+}
+
+.error-alert {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #fee2e2;
+  color: #991b1b;
+  border-radius: 6px;
+  border: 1px solid #f87171;
+  font-weight: bold;
+}
+
+.assistant-footer-note {
+  margin-top: 1.5rem;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
