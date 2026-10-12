@@ -1,0 +1,7 @@
+
+id,name,min_percentage,max_family_income,award_amount,category
+S001,AccessPath Future Scholars,60,300000,15000,General
+S002,Digital Learning Grant,75,500000,25000,General
+S003,Inclusive Education Award,50,250000,20000,Disability
+S004,STEM Opportunity Fund,85,600000,40000,STEM
+S005,Community Learning Support,65,200000,12000,Need-Based
