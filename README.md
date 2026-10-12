@@ -1,5 +1,5 @@
 
-# AccessPath — Accessible Scholarship Explorer
+# AccessPath -- Accessible Scholarship Explorer
 
 AccessPath is a hackathon prototype designed to make scholarship information easier to explore for people with disabilities, including people with visual impairments.
 
